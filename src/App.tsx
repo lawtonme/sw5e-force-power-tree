@@ -1,25 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Fragment, useEffect, useState} from 'react';
+import {SkillProvider, SkillTree, SkillTreeGroup} from "./beautiful-skill-tree";
+import {buildSkillTrees, fetchPowers} from "./data";
+import {Props as SkillTreeProps} from "./beautiful-skill-tree/components/SkillTree";
 
 function App() {
+  const [skillTrees, setSkillTrees] = useState<SkillTreeProps[]>([])
+
+  useEffect(() => {
+    fetchPowers().then(buildSkillTrees).then(setSkillTrees)
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div style={{marginBottom: 1000}}>
+      <SkillProvider>
+          <Fragment>
+          {
+              skillTrees.map(skillTree => (
+                  <SkillTreeGroup>
+                      {() =>
+                  <SkillTree
+                      key={skillTree.treeId}
+                      {...skillTree}
+                  />}
+                  </SkillTreeGroup>
+              ))
+              }
+          </Fragment>
+      </SkillProvider>
+      </div>
   );
 }
 
